@@ -65,7 +65,9 @@
 					</a>
 				</li>
 				<li class="nav-item">
-					<a href="" class="nav-link">
+					<a href="<?=base_url('ticket/manage_ticket');?>" class="nav-link <?php if (isset($p_manage_ticket)){
+						echo "active";
+					}?>">
 						<i class="nav-icon fas fa-folder"></i>
 						<p>Manage Ticket</p>
 					</a>
