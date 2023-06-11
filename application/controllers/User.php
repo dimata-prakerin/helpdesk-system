@@ -24,4 +24,20 @@ class User extends CI_Controller{
 		$data['active_page'] = $current_page;
 		$this->template->load('back/template', 'back/user/user', $data);
 	}
+
+	function setting_user($id_user){
+		$data['p_user'] = true;
+		$data['user'] = $this->M_User->get_user_by_id($id_user);
+		$this->template->load('back/template', 'back/user/setting_user', $data);
+	}
+
+	function process_change_role(){
+		$data = array(
+			'id_user' => $this->input->post('id_user'),
+			'role' => $this->input->post('role')
+		);
+		$this->M_User->update_role_by_id($data);
+		$this->session->set_flashdata('message', '<div class="alert alert-info">Role Updated!</div>');
+		redirect('user', 'refresh');
+	}
 }

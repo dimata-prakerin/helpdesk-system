@@ -9,6 +9,7 @@ class Ticket extends CI_Controller
 
 		$this->session->set_userdata('history', false);
 		$this->session->set_userdata('master_ticket', true);
+		$this->session->set_userdata('manage_ticket', false);
 
 		$ticket_per_page = 5;
 		$current_page = $this->input->get('page');
@@ -54,14 +55,29 @@ class Ticket extends CI_Controller
 		$this->load->helper('auth_helper');
 		check_login();
 
-		if($this->session->history == true){
+		if($this->session->history == true) {
 			$data['p_history_ticket'] = true;
-
+		}
+		else if ($this->session->manage_ticket == true){
+			$data['p_manage_ticket'] = true;
 		}else{
 			$data['p_ticket'] = true;
 		}
+
 		$ticket = $this->M_Ticket->get_ticket_by_id($id_ticket);
 		$data['ticket'] = $ticket[0];
+
+		$assignee = $this->M_Ticket->get_assignee_name_from_id_ticket($id_ticket);
+		$counter = 0;
+		$result = array();
+		foreach ($assignee as $a){
+			$result[$counter] = $a;
+			$counter++;
+		}
+		$data['assignee'] = $result;
+
+		$data['chat'] = $this->M_Ticket->get_chat_by_id_ticket($id_ticket);
+
 		if (($this->session->id_user != $data['ticket']->id_user) && $this->session->role == 0){
 			redirect('ticket/history_ticket', 'refresh');
 		}else {
@@ -76,6 +92,7 @@ class Ticket extends CI_Controller
 
 		$this->session->set_userdata('history', true);
 		$this->session->set_userdata('master_ticket', false);
+		$this->session->set_userdata('manage_ticket', false);
 
 		$ticket_per_page = 5;
 		$current_page = $this->input->get('page');
@@ -92,6 +109,21 @@ class Ticket extends CI_Controller
 		$data['ticket'] = $this->M_Ticket->get_ticket_by_user($this->session->id_user, $limit, $offset);
 		$data['total_page'] = $total_page;
 		$data['active_page'] = $current_page;
+
+		$result = array();
+		$counter = 0;
+		foreach ($data['ticket'] as $t) {
+			$temp = array();
+			$assignee = $this->M_Ticket->get_assignee_name_from_id_ticket($t->id_ticket);
+			$innerCounter = 0;
+			foreach ($assignee as $a){
+				$temp[$innerCounter] = $a;
+				$innerCounter++;
+			}
+			$result[$counter] = $temp;
+			$counter++;
+		}
+		$data['assignee'] = $result;
 		$this->template->load('back/template', 'back/ticket/history_ticket', $data);
 	}
 
@@ -123,8 +155,51 @@ class Ticket extends CI_Controller
 		$this->load->helper('auth_helper');
 		check_login();
 
+		$this->session->set_userdata('history', false);
+		$this->session->set_userdata('master_ticket', false);
+		$this->session->set_userdata('manage_ticket', true);
+
+		$ticket_per_page = 5;
+		$current_page = $this->input->get('page');
+		if (!isset($current_page)){
+			$current_page = 1;
+		}
+		$limit = $ticket_per_page;
+		$offset = ($current_page - 1) * $ticket_per_page;
+		$total_ticket =  $this->M_Ticket->get_count_ticket_by_assignee($this->session->id_user);
+		$total_page = ceil($total_ticket / $ticket_per_page);
+
 		$data['p_manage_ticket'] = true;
-		$data['ticket'] = $this->M_Ticket->get_ticket_by_assignee($this->session->id_user);
+		$data['ticket'] = $this->M_Ticket->get_ticket_by_assignee($this->session->id_user, $limit, $offset);
+		$data['total_page'] = $total_page;
+		$data['active_page'] = $current_page;
 		$this->template->load('back/template', 'back/ticket/manage_ticket', $data);
+	}
+
+
+	function setting_ticket($id_ticket){
+		$this->load->helper('auth_helper');
+		check_login();
+
+		$data['p_ticket'] = true;
+		$ticket = $this->M_Ticket->get_ticket_by_id($id_ticket);
+		$data['ticket'] = $ticket[0];
+		$assignee = $this->M_Ticket->get_assignee_name_from_id_ticket($id_ticket);
+		$counter = 0;
+		$result = array();
+		foreach ($assignee as $a){
+			$result[$counter] = $a;
+			$counter++;
+		}
+		$data['assignee'] = $result;
+		$data['temp'] = $this->M_Ticket->get_assignee_name_from_id_ticket($data['ticket']->id_ticket);
+		$data['admin'] = $this->M_Ticket->get_admin_username();
+		$this->template->load('back/template', 'back/ticket/setting_ticket', $data);
+	}
+
+	function close_ticket($id_ticket){
+		$status = 2;
+		$this->M_Ticket->update_status_by_id($id_ticket, $status);
+		redirect('ticket/manage_ticket', 'refresh');
 	}
 }

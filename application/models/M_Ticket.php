@@ -16,6 +16,7 @@ class M_Ticket extends CI_Model
 		$this->db->select('*');
 		$this->db->from('ticket');
 		$this->db->join('user', 'user.id_user = ticket.id_user');
+		$this->db->order_by('status', 'ASC');
 		$this->db->order_by('created', 'DESC');
 		$this->db->limit($limit, $offset);
 		$query = $this->db->get();
@@ -23,7 +24,7 @@ class M_Ticket extends CI_Model
 	}
 
 	function get_assignee_name_from_id_ticket($id_ticket){
-		$this->db->select('user.username');
+		$this->db->select('user.username, user.email');
 		$this->db->from('assignee');
 		$this->db->join('ticket', 'assignee.id_ticket = ticket.id_ticket ');
 		$this->db->join('user', 'user.id_user = assignee.id_assignee');
@@ -48,6 +49,8 @@ class M_Ticket extends CI_Model
 		$this->db->select('*');
 		$this->db->from('ticket');
 		$this->db->where('id_user', $id_user);
+		$this->db->order_by('status', 'ASC');
+		$this->db->order_by('created', 'DESC');
 		$this->db->limit($limit, $offset);
 		$query = $this->db->get();
 		return $query->result();
@@ -60,17 +63,58 @@ class M_Ticket extends CI_Model
 		return $this->db->get()->num_rows();
 	}
 
-	function get_ticket_by_assignee($id_assignee){
+	function get_ticket_by_assignee($id_assignee, $limit, $offset){
 		$this->db->select('ticket.id_ticket, ticket.message, ticket.subject, user.username, ticket.status, user.email');
 		$this->db->from('assignee');
 		$this->db->join('ticket', 'assignee.id_ticket = ticket.id_ticket');
 		$this->db->join('user', 'user.id_user = ticket.id_user');
 		$this->db->where('assignee.id_assignee', $id_assignee);
 		$this->db->order_by('status', 'ASC');
+		$this->db->order_by('created', 'DESC');
+		$this->db->limit($limit, $offset);
+		return $this->db->get()->result();
+	}
+
+	function get_count_ticket_by_assignee($id_assignee){
+		$this->db->select('ticket.id_ticket, ticket.message, ticket.subject, user.username, ticket.status, user.email');
+		$this->db->from('assignee');
+		$this->db->join('ticket', 'assignee.id_ticket = ticket.id_ticket');
+		$this->db->join('user', 'user.id_user = ticket.id_user');
+		$this->db->where('assignee.id_assignee', $id_assignee);
+		$this->db->order_by('status', 'ASC');
+		return $this->db->get()->num_rows();
+	}
+
+	function get_admin_username(){
+		$this->db->select('username, id_user, email');
+		$this->db->from('user');
+		$this->db->where('role >', 0);
 		return $this->db->get()->result();
 	}
 
 	function insert($data){
 		$this->db->insert('ticket', $data);
 	}
+
+	function get_status_by_id($id_ticket){
+		$this->db->select('status');
+		$this->db->from('ticket');
+		$this->db->where('id_ticket', $id_ticket);
+		return $this->db->get()->result();
+	}
+
+	function update_status_by_id($id_ticket, $new_status){
+		$this->db->set('status', $new_status);
+		$this->db->where('id_ticket', $id_ticket);
+		$this->db->update('ticket');
+	}
+
+	function get_chat_by_id_ticket($id_ticket){
+		$this->db->select("chat.id_ticket, chat.message, chat.created, user.role, user.username");
+		$this->db->from('chat');
+		$this->db->join('user', 'user.id_user = chat.id_user');
+		$this->db->where('id_ticket', $id_ticket);
+		return $this->db->get()->result();
+	}
+
 }

@@ -22,4 +22,16 @@ class M_User extends CI_Model
 		return $this->db->get('user', $limit, $offset)->result();
 	}
 
+	function get_user_by_id($id_user){
+		$this->db->select("*");
+		$this->db->from('user');
+		$this->db->where('id_user', $id_user);
+		return $this->db->get()->result();
+	}
+
+	function update_role_by_id($data){
+		$this->db->set('role', $data['role']);
+		$this->db->where('id_user', $data['id_user']);
+		$this->db->update('user');
+	}
 }

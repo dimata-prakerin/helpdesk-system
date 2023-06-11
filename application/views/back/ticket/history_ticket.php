@@ -51,7 +51,17 @@
 						?>
 					</td>
 					<td><?= $t->created; ?></td>
-					<td></td>
+					<td><?php
+						$items = count($assignee[$counter-2]);
+						$innerCounter = 1;
+						foreach ($assignee[$counter-2] as $a) {
+							echo $a->username;
+							if ($innerCounter < $items){
+								echo ", ";
+							}
+							$innerCounter++;
+						};
+						?></td>
 					<td>
 						<a href="<?= base_url("ticket/detail_ticket/") . $t->id_ticket; ?>">
 							<button class="btn btn-primary">Detail</button>

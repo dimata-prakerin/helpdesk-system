@@ -33,28 +33,34 @@
 						</p>
 					</a>
 				</li>
-				<li class="nav-header">DATA MASTER</li>
-				<li class="nav-item">
-					<a href="<?=base_url('user');?>" class="nav-link <?php if (isset($p_user)){
-						echo "active";
-					}?>">
-						<i class="nav-icon fas fa-users"></i>
-						<p>
-							Master User
-<!--							<span class="badge badge-info right">2</span>-->
-						</p>
-					</a>
-				</li>
-				<li class="nav-item">
-					<a href="<?=base_url('ticket');?>" class="nav-link  <?php if (isset($p_ticket)){
-						echo "active";
-					}?>">
-						<i class="nav-icon fas fa-clipboard-list"></i>
-						<p>
-							Master Tiket
-						</p>
-					</a>
-				</li>
+				<?php
+					if ($this->session->role != 0){?>
+						<li class="nav-header">DATA MASTER</li>
+						<li class="nav-item">
+							<a href="<?=base_url('user');?>" class="nav-link <?php if (isset($p_user)){
+								echo "active";
+							}?>">
+								<i class="nav-icon fas fa-users"></i>
+								<p>
+									Master User
+									<!--							<span class="badge badge-info right">2</span>-->
+								</p>
+							</a>
+						</li>
+						<li class="nav-item">
+							<a href="<?=base_url('ticket');?>" class="nav-link  <?php if (isset($p_ticket)){
+								echo "active";
+							}?>">
+								<i class="nav-icon fas fa-clipboard-list"></i>
+								<p>
+									Master Tiket
+								</p>
+							</a>
+						</li>
+
+					<?php }
+
+				?>
 				<li class="nav-header">TICKET</li>
 				<li class="nav-item">
 					<a href="<?=base_url('ticket/new_ticket');?>" class="nav-link <?php if (isset($p_new_ticket)){
@@ -64,14 +70,17 @@
 						<p>New Ticket</p>
 					</a>
 				</li>
-				<li class="nav-item">
-					<a href="<?=base_url('ticket/manage_ticket');?>" class="nav-link <?php if (isset($p_manage_ticket)){
-						echo "active";
-					}?>">
-						<i class="nav-icon fas fa-folder"></i>
-						<p>Manage Ticket</p>
-					</a>
-				</li>
+				<?php
+				if ($this->session->role != 0){?>
+					<li class="nav-item">
+						<a href="<?=base_url('ticket/manage_ticket');?>" class="nav-link <?php if (isset($p_manage_ticket)){
+							echo "active";
+						}?>">
+							<i class="nav-icon fas fa-folder"></i>
+							<p>Manage Ticket</p>
+						</a>
+					</li>
+				<?php } ?>
 				<li class="nav-item">
 					<a href="<?=base_url('ticket/history_ticket');?>" class="nav-link <?php if (isset($p_history_ticket)){
 						echo "active";

@@ -1,8 +1,12 @@
 <!-- Content Header (Page header) -->
 <div class="content-header">
 	<div class="container-fluid">
+		<?= $this->session->flashdata('message'); ?>
 		<div class="row mb-2">
 			<div class="col-sm-6">
+				<?php
+				$this->session->set_flashdata('message', '');
+				?>
 				<h1 class="m-0 text-dark">Master Ticket</h1>
 			</div><!-- /.col -->
 			<div class="col-sm-6">
@@ -34,7 +38,6 @@
 			</tr>
 			</thead>
 			<tbody>
-
 			<?php
 			$counter = 1;
 			foreach ($ticket as $t) { ?>
@@ -67,10 +70,18 @@
 						?></td>
 					<td>
 						<a href="<?=base_url("ticket/detail_ticket/") . $t->id_ticket;?>">
-							<button class="btn btn-primary">Detail</button>
+							<button class="btn btn-primary"><i class="fa-solid fa-circle-info"></i></button>
 						</a>
-					</td>
+						<?php
+							if ($this->session->role == 2){?>
+								<a href="<?=base_url("ticket/setting_ticket/") . $t->id_ticket;?>">
+									<button class="btn btn-info"><i class="fa-solid fa-people-arrows"></i></button>
+								</a>
+							<?php }
 
+						?>
+
+					</td>
 				</tr>
 			<?php }
 			?>

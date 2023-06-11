@@ -1,6 +1,10 @@
 <!-- Content Header (Page header) -->
 <div class="content-header">
 	<div class="container-fluid">
+		<?= $this->session->flashdata('message'); ?>
+		<?php
+		$this->session->set_flashdata('message', '');
+		?>
 		<div class="row mb-2">
 			<div class="col-sm-6">
 				<h1 class="m-0 text-dark">Master User</h1>
@@ -29,10 +33,10 @@
 				<th>Username</th>
 				<th>Email</th>
 				<th>Role</th>
+				<th>Actions</th>
 			</tr>
 			</thead>
 			<tbody>
-
 			<?php
 			$counter = 1;
 			foreach ($users as $user) { ?>
@@ -46,8 +50,15 @@
 							echo '<button class="btn btn-primary">User</button>';
 						}else if ($user->role == 1){
 							echo '<button class="btn btn-danger">Admin</button>';
+						}else if ($user->role == 2){
+							echo '<button class="btn btn-danger">Super Admin</button>';
 						}
 						?>
+					</td>
+					<td>
+						<a href="<?=base_url("user/setting_user/") . $user->id_user;?>">
+							<button class="btn btn-info"><i class="fa-solid fa-user-pen"></i></button>
+						</a>
 					</td>
 				</tr>
 			<?php }

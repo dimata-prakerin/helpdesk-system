@@ -55,13 +55,42 @@
 					</td>
 					<td>
 						<a href="<?=base_url("ticket/detail_ticket/") . $t->id_ticket;?>">
-							<button class="btn btn-primary">Detail</button>
+							<button class="btn btn-primary">
+								<i class="fa-solid fa-comments"></i>
+							</button>
+
+						</a>
+						<a href="<?=base_url("ticket/close_ticket/") . $t->id_ticket;?>">
+							<button class="btn btn-success"><i class="fa-regular fa-square-check"></i></button>
 						</a>
 					</td>
 				</tr>
 			<?php }
 			?>
 		</table>
+		<nav aria-label="Page navigation example">
+			<ul class="pagination justify-content-end">
+				<li class="page-item <?php
+				if ($active_page == 1 || $total_page == 0) {
+					echo "disabled";
+				}
+				?> "><a class="page-link" href="<?php echo "?page=" . ($active_page - 1); ?>">Previous</a></li>
+				<?php
+				for ($i = 1; $i <= $total_page; $i++) { ?>
+					<li class="page-item <?php
+					if ($i == $active_page) {
+						echo "active";
+					}
+					?>"><a class="page-link" href="<?php echo "?page=" . $i; ?>"><?= $i; ?></a></li>
+				<?php }
+				?>
+				<li class="page-item <?php
+				if ($active_page == $total_page || $total_page == 0) {
+					echo "disabled";
+				}
+				?>"><a class="page-link" href="<?php echo "?page=" . ($active_page + 1); ?>">Next</a></li>
+			</ul>
+		</nav>
 
 	</div><!-- /.container-fluid -->
 
